@@ -3,13 +3,18 @@ package com.example.asurion_test.repository
 import androidx.lifecycle.MutableLiveData
 import com.example.asurion_test.model.PetModel
 import com.example.asurion_test.network.response.Config
+import com.example.asurion_test.network.response.Pets
+import com.example.asurion_test.network.response.Settings
 import com.google.gson.Gson
 import okhttp3.*
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.IOException
 
 
 class HomeRepository {
-    private val mutableLiveData = MutableLiveData<PetModel>()
+    private val petLiveData = MutableLiveData<PetModel>()
+    private val configLiveData = MutableLiveData<Config>()
 
     fun getMutableLiveData(): MutableLiveData<PetModel> {
         val okHttpClient = OkHttpClient()
@@ -28,16 +33,29 @@ class HomeRepository {
             override fun onResponse(call: Call, response: Response) {
                 // Handle this
 
-                val myResponse = response.body()!!.string()
+                val responseString = response.body()!!.string()
 
-                val  pets= Gson().fromJson(myResponse, PetModel::class.java)
+                val petsJsonObject = JSONObject(responseString)
 
-                mutableLiveData.postValue(pets)
+                val petList:ArrayList<Pets> = ArrayList();
+                val petsModel = PetModel()
+
+                val petJsonArray: JSONArray = petsJsonObject.getJSONArray("pets")
+
+                for (i in 0 until petJsonArray.length()) {
+                    val petJsonObject:JSONObject=petJsonArray.getJSONObject(i)
+                    val pet = Pets();
+                    pet.title=petJsonObject.getString("title")
+                    pet.date_added=petJsonObject.getString("date_added")
+                    pet.content_url=petJsonObject.getString("content_url")
+                    petList.add(pet)
+                }
+                petsModel.pet=petList
+
+                petLiveData.postValue(petsModel)
             }
         })
-
-
-        return mutableLiveData
+        return petLiveData
     }
 
     fun getConfig(): MutableLiveData<Config> {
@@ -56,15 +74,24 @@ class HomeRepository {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val myResponse = response.body()!!.string()
+                val responseString = response.body()!!.string()
 
-                val  config= Gson().fromJson(myResponse, Config::class.java)
+                val petsJsonObject = JSONObject(responseString)
 
-                settingsLiveData.postValue(config)
+                val config = Config()
+                val settings=Settings()
+
+                val settingJsonObject: JSONObject = petsJsonObject.getJSONObject("settings")
+
+                settings.isCallEnabled=settingJsonObject.getBoolean("isCallEnabled")
+                settings.isChatEnabled=settingJsonObject.getBoolean("isChatEnabled")
+                settings.workHours=settingJsonObject.getString("workHours")
+
+                config.settings=settings
+
+                configLiveData.postValue(config)
             }
         })
-
-
         return settingsLiveData
     }
 

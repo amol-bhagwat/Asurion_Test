@@ -1,4 +1,7 @@
 package com.example.asurion_test.network.response
 
-data class Settings(val isChatEnabled:Boolean,val isCallEnabled:Boolean,val workHours:String) {
+ class Settings {
+     var isChatEnabled:Boolean=false
+     var isCallEnabled:Boolean=false
+     var workHours:String=""
 }

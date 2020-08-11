@@ -5,12 +5,12 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.asurion_test.network.response.Pet
+import com.example.asurion_test.network.response.Pets
 
 
 class PetModel{
 
-    val pet: List<Pet> = ArrayList<Pet>()
+    var pet: List<Pets> = ArrayList<Pets>()
 
     companion object  {
         @JvmStatic

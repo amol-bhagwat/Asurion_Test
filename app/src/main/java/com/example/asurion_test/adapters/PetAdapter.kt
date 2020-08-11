@@ -7,8 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.asurion_test.R
 import com.example.asurion_test.model.PetModel
-import com.example.asurion_test.network.response.Pet
-import java.util.ArrayList
+import com.example.asurion_test.network.response.Pets
 
 class PetAdapter : RecyclerView.Adapter<PetAdapter.ViewHolder>() {
 
@@ -30,7 +29,7 @@ class PetAdapter : RecyclerView.Adapter<PetAdapter.ViewHolder>() {
     //the class is hodling the list view
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bindItems(pet: Pet) {
+        fun bindItems(pet: Pets) {
             val textViewName = itemView.findViewById(R.id.textViewUsername) as TextView
             val textViewAddress  = itemView.findViewById(R.id.textViewAddress) as TextView
             textViewName.text = pet.title
