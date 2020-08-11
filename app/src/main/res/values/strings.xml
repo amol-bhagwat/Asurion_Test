@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Asurion_Test</string>
+
+    <string name="chapter_url">http://18.218.145.221/outofeden/chapters/index.php</string>
+
+    <string name="chat">Chat</string>
+    <string name="call">Call</string>
+</resources>
