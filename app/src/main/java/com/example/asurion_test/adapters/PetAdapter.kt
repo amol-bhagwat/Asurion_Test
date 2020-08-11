@@ -7,11 +7,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.asurion_test.R
 import com.example.asurion_test.model.PetModel
+import com.example.asurion_test.network.response.Pet
 import java.util.ArrayList
 
-class PetAdapter() : RecyclerView.Adapter<PetAdapter.ViewHolder>() {
+class PetAdapter : RecyclerView.Adapter<PetAdapter.ViewHolder>() {
 
-    private var petList: ArrayList<PetModel>? = ArrayList<PetModel>()
+    private var petModel: PetModel? = PetModel()
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
         val v = LayoutInflater.from(viewGroup.context).inflate(R.layout.list_layout, viewGroup, false)
@@ -19,26 +20,26 @@ class PetAdapter() : RecyclerView.Adapter<PetAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(petList!![position])
+        holder.bindItems(petModel?.pet!!.get(position))
     }
 
     override fun getItemCount(): Int {
-        return petList!!.size
+        return petModel?.pet!!.size
     }
 
     //the class is hodling the list view
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bindItems(user: PetModel) {
+        fun bindItems(pet: Pet) {
             val textViewName = itemView.findViewById(R.id.textViewUsername) as TextView
             val textViewAddress  = itemView.findViewById(R.id.textViewAddress) as TextView
-            textViewName.text = user.login
-            textViewAddress.text = user.login
+            textViewName.text = pet.title
+            textViewAddress.text = pet.date_added
         }
     }
 
-    fun setPetList(mPetModel: ArrayList<PetModel>) {
-        this.petList = mPetModel
+    fun setPetList(mPetModel:PetModel) {
+        this.petModel = mPetModel
         notifyDataSetChanged()
     }
 }

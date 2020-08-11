@@ -42,9 +42,9 @@ class HomeActivity : AppCompatActivity() {
     private fun getPet() {
         //get the list of pet from api response
         homeViewModel!!.allPet.observe(this,
-            Observer<List<Any>> { mPetModel ->
+            Observer<Any> { mPetModel ->
                 // if any thing change the update the UI
-                    mPetAdapter?.setPetList(mPetModel as ArrayList<PetModel>)
+                    mPetAdapter?.setPetList(mPetModel as PetModel)
                     loadBar?.visibility = View.GONE
 
             })

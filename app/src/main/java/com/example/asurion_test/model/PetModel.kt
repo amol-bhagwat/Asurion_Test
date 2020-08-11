@@ -5,10 +5,12 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.gson.annotations.SerializedName
+import com.example.asurion_test.network.response.Pet
 
 
-class PetModel(val login: String, val avatar_url: String) {
+class PetModel{
+
+    val pet: List<Pet> = ArrayList<Pet>()
 
     companion object  {
         @JvmStatic
