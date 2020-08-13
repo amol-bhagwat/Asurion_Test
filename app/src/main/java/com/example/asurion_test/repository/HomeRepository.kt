@@ -5,7 +5,6 @@ import com.example.asurion_test.model.PetModel
 import com.example.asurion_test.network.response.Config
 import com.example.asurion_test.network.response.Pets
 import com.example.asurion_test.network.response.Settings
-import com.google.gson.Gson
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -48,6 +47,8 @@ class HomeRepository {
                     pet.title=petJsonObject.getString("title")
                     pet.date_added=petJsonObject.getString("date_added")
                     pet.content_url=petJsonObject.getString("content_url")
+                    pet.image_url=petJsonObject.getString("image_url")
+
                     petList.add(pet)
                 }
                 petsModel.pet=petList
@@ -59,7 +60,6 @@ class HomeRepository {
     }
 
     fun getConfig(): MutableLiveData<Config> {
-         val settingsLiveData = MutableLiveData<Config>()
 
         val okHttpClient = OkHttpClient()
         val request = Request.Builder()
@@ -92,7 +92,7 @@ class HomeRepository {
                 configLiveData.postValue(config)
             }
         })
-        return settingsLiveData
+        return configLiveData
     }
 
 }

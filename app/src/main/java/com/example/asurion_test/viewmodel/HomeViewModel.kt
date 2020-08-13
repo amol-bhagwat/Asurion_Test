@@ -10,10 +10,10 @@ import com.example.asurion_test.repository.HomeRepository
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val mPetRepository: HomeRepository = HomeRepository()
 
-//    val allPet: LiveData<PetModel>
-//        get() = mPetRepository.getMutableLiveData()
+    val allPet: LiveData<PetModel>
+        get() = mPetRepository.getMutableLiveData()
 
 
-    val config: LiveData<Config>
+    val getConfig: LiveData<Config>
         get() = mPetRepository.getConfig()
 }
