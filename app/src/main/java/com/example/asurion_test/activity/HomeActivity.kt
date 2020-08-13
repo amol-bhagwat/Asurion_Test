@@ -108,12 +108,9 @@ class HomeActivity : AppCompatActivity() {
                 if(config.error.isNullOrBlank()){
                 val splittedWorkHours = config.settings?.workHours?.split(" ")
 
-                    val startTime=SimpleDateFormat("HH:mm", Locale.US).parse(splittedWorkHours!![1])
-                    val closingTime=SimpleDateFormat("HH:mm", Locale.US).parse("20:00")
-
-                    //val startTime=parseDate(splittedWorkHours!![1])
-                //val closingTime=parseDate(splittedWorkHours[3])
-
+                val startTime=SimpleDateFormat("HH:mm", Locale.US).parse(splittedWorkHours!![1])
+                val closingTime=SimpleDateFormat("HH:mm", Locale.US).parse(splittedWorkHours!![3])
+                    
                 val currentTime = parseDate(SimpleDateFormat("HH.mm", Locale.getDefault()).format(Date()))
 
                 isWithinOffice = currentTime!!.before(closingTime) && currentTime.after(startTime)
