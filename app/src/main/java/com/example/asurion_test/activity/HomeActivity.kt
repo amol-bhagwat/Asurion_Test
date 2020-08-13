@@ -47,7 +47,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun preWork() {
-        mHomeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         mPetListAdapter = PetListAdapter(this)
         mRecyclerView?.adapter = mPetListAdapter
     }
@@ -61,6 +60,8 @@ class HomeActivity : AppCompatActivity() {
         mRecyclerView=findViewById(R.id.recyclerView)
         mRecyclerView!!.layoutManager = LinearLayoutManager(this)
         mRecyclerView!!.setHasFixedSize(true)
+
+        mHomeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         mBtnCall?.setOnClickListener {
             officeStatus()
