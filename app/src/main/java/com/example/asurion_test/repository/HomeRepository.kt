@@ -5,6 +5,7 @@ import com.example.asurion_test.model.PetModel
 import com.example.asurion_test.network.response.Config
 import com.example.asurion_test.network.response.Pets
 import com.example.asurion_test.network.response.Settings
+import com.example.asurion_test.util.Constant
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -14,24 +15,26 @@ import java.io.IOException
 class HomeRepository {
     private val petLiveData = MutableLiveData<PetModel>()
     private val configLiveData = MutableLiveData<Config>()
+    private val progressLiveData = MutableLiveData<Boolean>()
+    private val errorLiveData = MutableLiveData<String>()
 
-    fun getMutableLiveData(): MutableLiveData<PetModel> {
+
+    fun getPetLiveData(): MutableLiveData<PetModel> {
         val okHttpClient = OkHttpClient()
         val request = Request.Builder()
             .get()
-            .url("https://raw.githubusercontent.com/amol-bhagwat/Asurion_Test/master/app/src/main/res/assets/pets.json")
+            .url(Constant.PET_URL)
             .build()
 
 
         okHttpClient.newCall(request).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
-                // Handle this
+                errorLiveData.postValue("Something went wrong")
+                progressLiveData.postValue(false)
             }
 
             override fun onResponse(call: Call, response: Response) {
-                // Handle this
-
                 val responseString = response.body()!!.string()
 
                 val petsJsonObject = JSONObject(responseString)
@@ -64,13 +67,14 @@ class HomeRepository {
         val okHttpClient = OkHttpClient()
         val request = Request.Builder()
             .get()
-            .url("https://raw.githubusercontent.com/amol-bhagwat/Asurion_Test/master/app/src/main/res/assets/config.json")
+            .url(Constant.CONFIG_URL)
             .build()
 
         okHttpClient.newCall(request).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
-                // Handle this
+                errorLiveData.postValue("Something went wrong")
+                progressLiveData.postValue(false)
             }
 
             override fun onResponse(call: Call, response: Response) {

@@ -1,10 +1,15 @@
-package com.example.asurion_test
+package com.example.asurion_test.activity
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
@@ -12,8 +17,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.asurion_test.adapters.PetAdapter
+import com.example.asurion_test.R
+import com.example.asurion_test.adapters.PetListAdapter
 import com.example.asurion_test.model.PetModel
+import com.example.asurion_test.util.NetworkUtils
 import com.example.asurion_test.viewmodel.HomeViewModel
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -22,56 +29,45 @@ import java.util.*
 
 class HomeActivity : AppCompatActivity() {
 
-    internal var loadBar : ProgressBar? = null
-    var homeViewModel: HomeViewModel? = null
-    private var mPetAdapter: PetAdapter? = null
+    private var loadBar : ProgressBar? = null
+    private var homeViewModel: HomeViewModel? = null
+    private var mPetListAdapter: PetListAdapter? = null
     private var mRecyclerView: RecyclerView? = null
     private var mBtnCall: AppCompatButton? = null
     private var mBtnChat: AppCompatButton? = null
     private var mTextViewOfficeTime: TextView? = null
-    var isWithinOffice : Boolean =false
-
+    private var isWithinOffice : Boolean =false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        val calendar: Calendar = Calendar.getInstance()
-//        val hourOfDay: Int = calendar.get(Calendar.HOUR_OF_DAY)
-//        val minutes: Int  = calendar[Calendar.MINUTE]
-//
-//        val splittedStringList = "M/F 10.00 - 18.00".split(" ")
-//        println(splittedStringList[0])
-//
-//        val startTime=parseDate(splittedStringList[1])
-//        val closingTime=parseDate(splittedStringList[3])
-//
-//        val currentTime =
-//            parseDate(SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date()))
-//
-//        if (closingTime!!.before(currentTime)) {
-//            Log.e("Time :", "===> is before from current time")
-//        }
-//
-//        if (startTime!!.after(currentTime)) {
-//            Log.e("Time :", "===> is after from current time")
-//        }
+        initViews()
 
+        preWork()
+
+        if(NetworkUtils.isNetworkAvailable(this)) {
+            getPet()
+            getConfig()
+        }else{
+            Toast.makeText(this,getString(R.string.check_internet_connection),Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun preWork() {
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        mPetListAdapter = PetListAdapter(this)
+        mRecyclerView?.adapter = mPetListAdapter
+    }
+
+    private fun initViews() {
         mBtnChat=findViewById(R.id.buttonChat)
-        mBtnChat=findViewById(R.id.buttonCall)
+        mBtnCall=findViewById(R.id.buttonCall)
         mTextViewOfficeTime=findViewById(R.id.textViewOfficeTime)
 
         mRecyclerView=findViewById(R.id.recyclerView)
         mRecyclerView!!.layoutManager = LinearLayoutManager(this)
         mRecyclerView!!.setHasFixedSize(true)
-
-        ///init the View Model
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        //init the Custom adapter
-        mPetAdapter = PetAdapter(this)
-        //mRecyclerView the CustomAdapter
-        mRecyclerView?.setAdapter(mPetAdapter)
 
         mBtnCall?.setOnClickListener {
             officeStatus()
@@ -80,10 +76,6 @@ class HomeActivity : AppCompatActivity() {
         mBtnChat?.setOnClickListener {
             officeStatus()
         }
-
-        getPet()
-        getConfig()
-        //basicAlert()
     }
 
     private fun parseDate(date: String): Date? {
@@ -96,12 +88,23 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun getPet() {
         homeViewModel!!.allPet.observe(this,
             Observer<Any> { mPetModel ->
-                // if any thing change the update the UI
-                    mPetAdapter?.setPetList(mPetModel as PetModel)
+                    mPetListAdapter?.setPetList(mPetModel as PetModel)
                     loadBar?.visibility = View.GONE
+            })
+        homeViewModel!!.allPet.observe(this,
+            Observer<Any> { mPetModel ->
+                mPetListAdapter?.setPetList(mPetModel as PetModel)
+                loadBar?.visibility = View.GONE
+            })
+        homeViewModel!!.allPet.observe(this,
+            Observer<Any> { mPetModel ->
+                mPetListAdapter?.setPetList(mPetModel as PetModel)
+                loadBar?.visibility = View.GONE
             })
     }
 
@@ -132,20 +135,17 @@ class HomeActivity : AppCompatActivity() {
             if(config.settings?.isCallEnabled==true){
                 mBtnCall?.visibility=View.VISIBLE
             }
-            mTextViewOfficeTime?.setText(config.settings?.workHours)
+            mTextViewOfficeTime?.text = getString(R.string.office_hours)+config.settings?.workHours
         })
     }
 
-    fun officeWorkAlert(message:String){
+    private fun officeWorkAlert(message:String){
         val builder = AlertDialog.Builder(this)
-
         with(builder)
         {
-            setTitle("Alert")
+            setTitle(getString(R.string.alert_msg))
             setMessage(message)
             show()
         }
-
-
     }
 }

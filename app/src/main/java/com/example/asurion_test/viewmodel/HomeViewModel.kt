@@ -11,8 +11,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val mPetRepository: HomeRepository = HomeRepository()
 
     val allPet: LiveData<PetModel>
-        get() = mPetRepository.getMutableLiveData()
-
+        get() = mPetRepository.getPetLiveData()
 
     val getConfig: LiveData<Config>
         get() = mPetRepository.getConfig()

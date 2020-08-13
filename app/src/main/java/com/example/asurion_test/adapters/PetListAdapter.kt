@@ -10,10 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.asurion_test.HomeActivity
-import com.example.asurion_test.PetInfoActivity
+import com.example.asurion_test.activity.HomeActivity
+import com.example.asurion_test.activity.PetInfoActivity
 import com.example.asurion_test.R
 import com.example.asurion_test.model.PetModel
 import com.example.asurion_test.network.response.Pets
@@ -23,8 +22,7 @@ import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.URL
 
-
-class PetAdapter(mContext: Context?) : RecyclerView.Adapter<PetAdapter.ViewHolder>() {
+class PetListAdapter(mContext: Context?) : RecyclerView.Adapter<PetListAdapter.ViewHolder>() {
 
     private var petModel: PetModel? = PetModel()
 
