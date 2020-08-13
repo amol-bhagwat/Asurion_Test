@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.asurion_test.R
 import com.example.asurion_test.util.Constant
 
-
 class PetInfoActivity : AppCompatActivity() {
 
  private lateinit var url:String

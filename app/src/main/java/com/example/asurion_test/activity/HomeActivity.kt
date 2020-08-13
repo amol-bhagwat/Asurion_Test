@@ -17,10 +17,6 @@ import com.example.asurion_test.adapters.PetListAdapter
 import com.example.asurion_test.model.PetModel
 import com.example.asurion_test.util.NetworkUtils
 import com.example.asurion_test.viewmodel.HomeViewModel
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.*
-
 
 class HomeActivity : AppCompatActivity() {
 
@@ -110,7 +106,6 @@ class HomeActivity : AppCompatActivity() {
             }else{
                 Toast.makeText(this,config.error,Toast.LENGTH_SHORT).show()
             }
-
         })
     }
 
