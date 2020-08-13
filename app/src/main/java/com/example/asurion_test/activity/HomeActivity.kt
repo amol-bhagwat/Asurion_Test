@@ -110,7 +110,7 @@ class HomeActivity : AppCompatActivity() {
 
                 val startTime=SimpleDateFormat("HH:mm", Locale.US).parse(splittedWorkHours!![1])
                 val closingTime=SimpleDateFormat("HH:mm", Locale.US).parse(splittedWorkHours!![3])
-                    
+
                 val currentTime = parseDate(SimpleDateFormat("HH.mm", Locale.getDefault()).format(Date()))
 
                 isWithinOffice = currentTime!!.before(closingTime) && currentTime.after(startTime)
@@ -121,7 +121,7 @@ class HomeActivity : AppCompatActivity() {
                 if(config.settings?.isCallEnabled==true){
                     mBtnCall?.visibility=View.VISIBLE
                 }
-                mTextViewOfficeTime?.setText(getString(R.string.office_hours)+config.settings?.workHours)
+                    mTextViewOfficeTime?.text = getString(R.string.office_hours).plus(config.settings?.workHours)
 
             }else{
                 Toast.makeText(this,config.error,Toast.LENGTH_SHORT).show()
