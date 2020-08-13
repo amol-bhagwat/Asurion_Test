@@ -26,7 +26,7 @@ class HomeActivity : AppCompatActivity() {
     private var mBtnCall: AppCompatButton? = null
     private var mBtnChat: AppCompatButton? = null
     private var mTextViewOfficeTime: TextView? = null
-    private var isWithinOffice : Boolean =false
+    private var isWithinOfficeHours : Boolean =false
     private var mProgressBar: ProgressBar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,7 +94,7 @@ class HomeActivity : AppCompatActivity() {
             mProgressBar?.visibility = View.GONE
 
                 if(config.error.isNullOrBlank()){
-                isWithinOffice=mHomeViewModel.compareOfficeTime(config,mHomeViewModel.currentTime())
+                    isWithinOfficeHours=mHomeViewModel.compareOfficeTime(config,mHomeViewModel.currentTime())
 
                 if(config.settings?.isChatEnabled==true){
                     mBtnChat?.visibility=View.VISIBLE
@@ -122,7 +122,7 @@ class HomeActivity : AppCompatActivity() {
 
     //Show alert as per office time
     private fun officeStatus() {
-        if(isWithinOffice){
+        if(isWithinOfficeHours){
             officeWorkAlert(getString(R.string.within_work_hours))
         }else{
             officeWorkAlert(getString(R.string.outside_work_hours))
