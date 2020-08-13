@@ -1,6 +1,9 @@
 package com.example.asurion_test.repository
 
+import android.content.res.Resources
 import androidx.lifecycle.MutableLiveData
+import com.example.asurion_test.R
+import com.example.asurion_test.model.BaseModel
 import com.example.asurion_test.model.PetModel
 import com.example.asurion_test.network.response.Config
 import com.example.asurion_test.network.response.Pets
@@ -15,9 +18,6 @@ import java.io.IOException
 class HomeRepository {
     private val petLiveData = MutableLiveData<PetModel>()
     private val configLiveData = MutableLiveData<Config>()
-    private val progressLiveData = MutableLiveData<Boolean>()
-    private val errorLiveData = MutableLiveData<String>()
-
 
     fun getPetLiveData(): MutableLiveData<PetModel> {
         val okHttpClient = OkHttpClient()
@@ -30,8 +30,9 @@ class HomeRepository {
         okHttpClient.newCall(request).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
-                errorLiveData.postValue("Something went wrong")
-                progressLiveData.postValue(false)
+                val petModel = PetModel()
+                petModel.error=Resources.getSystem().getString(R.string.something_went_wrong)
+                petLiveData.postValue(petModel as PetModel?)
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -40,7 +41,7 @@ class HomeRepository {
                 val petsJsonObject = JSONObject(responseString)
 
                 val petList:ArrayList<Pets> = ArrayList();
-                val petsModel = PetModel()
+                val petModel = PetModel()
 
                 val petJsonArray: JSONArray = petsJsonObject.getJSONArray("pets")
 
@@ -54,9 +55,9 @@ class HomeRepository {
 
                     petList.add(pet)
                 }
-                petsModel.pet=petList
+                petModel.pet=petList
 
-                petLiveData.postValue(petsModel)
+                petLiveData.postValue(petModel)
             }
         })
         return petLiveData
@@ -73,8 +74,9 @@ class HomeRepository {
         okHttpClient.newCall(request).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
-                errorLiveData.postValue("Something went wrong")
-                progressLiveData.postValue(false)
+                val config = Config()
+                config.error=Resources.getSystem().getString(R.string.something_went_wrong)
+                configLiveData.postValue(config as Config?)
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -98,5 +100,6 @@ class HomeRepository {
         })
         return configLiveData
     }
+
 
 }

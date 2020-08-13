@@ -1,5 +1,7 @@
 package com.example.asurion_test.network.response
 
- class Config {
+import com.example.asurion_test.model.BaseModel
+
+class Config : BaseModel() {
     var settings: Settings? = null
 }
