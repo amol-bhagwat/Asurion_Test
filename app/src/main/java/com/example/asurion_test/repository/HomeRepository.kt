@@ -3,7 +3,6 @@ package com.example.asurion_test.repository
 import android.content.res.Resources
 import androidx.lifecycle.MutableLiveData
 import com.example.asurion_test.R
-import com.example.asurion_test.model.BaseModel
 import com.example.asurion_test.model.PetModel
 import com.example.asurion_test.network.response.Config
 import com.example.asurion_test.network.response.Pets
@@ -19,7 +18,8 @@ class HomeRepository {
     private val petLiveData = MutableLiveData<PetModel>()
     private val configLiveData = MutableLiveData<Config>()
 
-    fun getPetLiveData(): MutableLiveData<PetModel> {
+    fun getPetList(): MutableLiveData<PetModel> {
+
         val okHttpClient = OkHttpClient()
         val request = Request.Builder()
             .get()
@@ -32,12 +32,13 @@ class HomeRepository {
             override fun onFailure(call: Call, e: IOException) {
                 val petModel = PetModel()
                 petModel.error=Resources.getSystem().getString(R.string.something_went_wrong)
-                petLiveData.postValue(petModel as PetModel?)
+                petLiveData.postValue(petModel)
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val responseString = response.body()!!.string()
+                val responseString = response.body()?.string()
 
+                //Parse Data
                 val petsJsonObject = JSONObject(responseString)
 
                 val petList:ArrayList<Pets> = ArrayList();
@@ -80,8 +81,9 @@ class HomeRepository {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val responseString = response.body()!!.string()
+                val responseString = response.body()?.string()
 
+                //Parse Data
                 val petsJsonObject = JSONObject(responseString)
 
                 val config = Config()

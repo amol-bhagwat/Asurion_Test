@@ -24,7 +24,7 @@ import java.util.*
 
 class HomeActivity : AppCompatActivity() {
 
-    private var mHomeViewModel: HomeViewModel? = null
+    private lateinit var mHomeViewModel: HomeViewModel
     private var mPetListAdapter: PetListAdapter? = null
     private var mRecyclerView: RecyclerView? = null
     private var mBtnCall: AppCompatButton? = null
@@ -32,7 +32,6 @@ class HomeActivity : AppCompatActivity() {
     private var mTextViewOfficeTime: TextView? = null
     private var isWithinOffice : Boolean =false
     private var mProgressBar: ProgressBar? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +41,7 @@ class HomeActivity : AppCompatActivity() {
 
         preWork()
 
+        //Check internet and dp api calll
         if(NetworkUtils.isNetworkAvailable(this)) {
             getConfig()
             getPet()
@@ -62,7 +62,6 @@ class HomeActivity : AppCompatActivity() {
         mTextViewOfficeTime=findViewById(R.id.textViewOfficeTime)
         mProgressBar=findViewById(R.id.progressBar)
 
-
         mRecyclerView=findViewById(R.id.recyclerView)
         mRecyclerView!!.layoutManager = LinearLayoutManager(this)
         mRecyclerView!!.setHasFixedSize(true)
@@ -76,20 +75,11 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun parseDate(date: String): Date? {
-        val inputFormat = "HH.mm"
-        val inputParser = SimpleDateFormat(inputFormat, Locale.US)
-        return try {
-            inputParser.parse(date)
-        } catch (e: ParseException) {
-            Date(0)
-        }
-    }
-
+    //Get pet details
     private fun getPet() {
         mProgressBar?.visibility = View.VISIBLE
 
-        mHomeViewModel!!.allPet.observe(this,
+        mHomeViewModel.allPet.observe(this,
             Observer { petModel ->
                 mProgressBar?.visibility = View.GONE
                 if(petModel.error.isNullOrBlank()){
@@ -100,20 +90,14 @@ class HomeActivity : AppCompatActivity() {
             })
     }
 
+        //Get configuration
         private fun getConfig() {
             mProgressBar?.visibility = View.VISIBLE
-            mHomeViewModel!!.getConfig.observe(this, Observer { config ->
+            mHomeViewModel.getConfig.observe(this, Observer { config ->
             mProgressBar?.visibility = View.GONE
 
                 if(config.error.isNullOrBlank()){
-                val splittedWorkHours = config.settings?.workHours?.split(" ")
-
-                val startTime=SimpleDateFormat("HH:mm", Locale.US).parse(splittedWorkHours!![1])
-                val closingTime=SimpleDateFormat("HH:mm", Locale.US).parse(splittedWorkHours!![3])
-
-                val currentTime = parseDate(SimpleDateFormat("HH.mm", Locale.getDefault()).format(Date()))
-
-                isWithinOffice = currentTime!!.before(closingTime) && currentTime.after(startTime)
+                isWithinOffice=mHomeViewModel.compareOfficeTime(config,mHomeViewModel.currentTime())
 
                 if(config.settings?.isChatEnabled==true){
                     mBtnChat?.visibility=View.VISIBLE
@@ -140,6 +124,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    //Show alert as per office time
     private fun officeStatus() {
         if(isWithinOffice){
             officeWorkAlert(getString(R.string.within_work_hours))

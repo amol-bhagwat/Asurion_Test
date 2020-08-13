@@ -16,6 +16,7 @@ import com.example.asurion_test.activity.PetInfoActivity
 import com.example.asurion_test.R
 import com.example.asurion_test.model.PetModel
 import com.example.asurion_test.network.response.Pets
+import com.example.asurion_test.util.Constant
 import java.io.IOException
 import java.io.InputStream
 import java.lang.ref.WeakReference
@@ -51,12 +52,12 @@ class PetListAdapter(mContext: Context?) : RecyclerView.Adapter<PetListAdapter.V
             val textViewName = itemView.findViewById(R.id.textViewPetName) as TextView
             val imageView = itemView.findViewById(R.id.imageViewPet) as ImageView
 
-             BitmapWorkerTask(imageView).execute(pet.image_url);
-            textViewName.setText(pet.title)
+            BitmapWorkerTask(imageView).execute(pet.image_url);
+            textViewName.text = pet.title
 
             itemView.setOnClickListener {
                 val intent = Intent(context as HomeActivity, PetInfoActivity::class.java)
-                intent.putExtra("URL", pet.content_url)
+                intent.putExtra(Constant.URL, pet.content_url)
                 (context as HomeActivity).startActivity(intent)
             }
         }
@@ -72,7 +73,6 @@ class PetListAdapter(mContext: Context?) : RecyclerView.Adapter<PetListAdapter.V
         private val imageViewReference: WeakReference<ImageView>?
         private var imageUrl: String? = null
 
-        // Once complete, see if ImageView is still around and set bitmap.
         override fun onPostExecute(bitmap: Bitmap?) {
             if (imageViewReference != null && bitmap != null) {
                 val imageView: ImageView? = imageViewReference.get()
@@ -80,11 +80,11 @@ class PetListAdapter(mContext: Context?) : RecyclerView.Adapter<PetListAdapter.V
             }
         }
 
-        private fun LoadImage(URL: String?): Bitmap? {
+        private fun loadImage(URL: String?): Bitmap? {
             var bitmap: Bitmap? = null
-            var `in`: InputStream? = null
+            var `in`: InputStream?
             try {
-                `in` = OpenHttpConnection(URL)
+                `in` = openHttpConnection(URL)
                 bitmap = BitmapFactory.decodeStream(`in`)
                 `in`!!.close()
             } catch (e1: IOException) {
@@ -93,7 +93,7 @@ class PetListAdapter(mContext: Context?) : RecyclerView.Adapter<PetListAdapter.V
         }
 
         @Throws(IOException::class)
-        private fun OpenHttpConnection(strURL: String?): InputStream? {
+        private fun openHttpConnection(strURL: String?): InputStream? {
             var inputStream: InputStream? = null
             val url = URL(strURL)
             val conn = url.openConnection()
@@ -109,13 +109,13 @@ class PetListAdapter(mContext: Context?) : RecyclerView.Adapter<PetListAdapter.V
             return inputStream
         }
 
-        init { // Use a WeakReference to ensure the ImageView can be garbage
-// collected
+        init { 
             imageViewReference = WeakReference<ImageView>(imageView)
         }
 
         override fun doInBackground(vararg params: String?): Bitmap? {
             imageUrl = params[0]
-            return LoadImage(imageUrl)        }
+            return loadImage(imageUrl)
+        }
     }
 }
