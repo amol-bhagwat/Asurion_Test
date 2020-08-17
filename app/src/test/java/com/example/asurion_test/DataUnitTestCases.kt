@@ -5,8 +5,10 @@ import com.example.asurion_test.network.response.Pets
 import com.example.asurion_test.network.response.Settings
 import com.example.asurion_test.repository.HomeRepository
 import com.example.asurion_test.viewmodel.HomeViewModel
-import org.junit.Assert.*
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.mockito.internal.matchers.apachecommons.ReflectionEquals
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -15,23 +17,25 @@ import java.util.*
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class ExampleUnitTest {
+class DataUnitTestCases {
 
     @Test
     fun parseConfigData() {
         val setting = Settings()
         setting.isChatEnabled = false
-        setting. isCallEnabled= true
+        setting.isCallEnabled = true
         setting.workHours = "M-F 9:00 - 18:00"
         val homeRepository = HomeRepository()
 
-        val settingsParsed=homeRepository.configParsing("{\"settings\": {\n" +
-                "\t\"isChatEnabled\" : false,\n" +
-                "\t\"isCallEnabled\" : true,\n" +
-                "\t\"workHours\" : \"M-F 9:00 - 18:00\"\n" +
-                "}\n" +
-                "}")
-        assertEquals(settingsParsed, setting)
+        val settingsParsed = homeRepository.configParsing(
+            "{\"settings\": {\n" +
+                    "\t\"isChatEnabled\" : false,\n" +
+                    "\t\"isCallEnabled\" : true,\n" +
+                    "\t\"workHours\" : \"M-F 9:00 - 18:00\"\n" +
+                    "}\n" +
+                    "}"
+        )
+        assertTrue(ReflectionEquals(setting, "").matches(settingsParsed))
     }
 
     @Test
@@ -48,7 +52,7 @@ class ExampleUnitTest {
         petList.add(pet)
 
         val homeRepository = HomeRepository()
-        val settingsParsed = homeRepository.parsePetResponse(
+        val petListParsed = homeRepository.parsePetResponse(
             "{\n" +
                     "\t\"pets\": [{\n" +
                     "\t\t\"image_url\": \"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Cat_poster_1.jpg/1200px-Cat_poster_1.jpg\",\n" +
@@ -59,24 +63,34 @@ class ExampleUnitTest {
                     "}"
         )
 
-        assertEquals(settingsParsed, petList)
+        assertTrue(ReflectionEquals(petList, "").matches(petListParsed))
     }
 
     @Test
     fun checkDateCompareOutOfOffice() {
         val homeViewModel = HomeViewModel()
-        val config= Config()
-        config.settings= Settings()
-        config.settings?.workHours="M-F 9:00 - 18:00"
-        assertFalse(homeViewModel.compareOfficeTime(config, SimpleDateFormat("HH:mm", Locale.US).parse("20:00")))
+        val config = Config()
+        config.settings = Settings()
+        config.settings?.workHours = "M-F 9:00 - 18:00"
+        assertFalse(
+            homeViewModel.compareOfficeTime(
+                config,
+                SimpleDateFormat("HH:mm", Locale.US).parse("20:00")
+            )
+        )
     }
 
     @Test
     fun checkDateCompareWithinOffice() {
         val homeViewModel = HomeViewModel()
-        val config= Config()
-        config.settings= Settings()
-        config.settings?.workHours="M-F 9:00 - 18:00"
-        assertTrue(homeViewModel.compareOfficeTime(config, SimpleDateFormat("HH:mm", Locale.US).parse("10:00")))
+        val config = Config()
+        config.settings = Settings()
+        config.settings?.workHours = "M-F 9:00 - 18:00"
+        assertTrue(
+            homeViewModel.compareOfficeTime(
+                config,
+                SimpleDateFormat("HH:mm", Locale.US).parse("10:00")
+            )
+        )
     }
 }

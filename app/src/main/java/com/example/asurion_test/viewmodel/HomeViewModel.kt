@@ -1,7 +1,5 @@
 package com.example.asurion_test.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.asurion_test.model.PetModel
