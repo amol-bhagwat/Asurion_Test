@@ -23,14 +23,14 @@ import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.URL
 
-class PetListAdapter(mContext: Context?) : RecyclerView.Adapter<PetListAdapter.ViewHolder>() {
+class PetListAdapter(context: Context?) : RecyclerView.Adapter<PetListAdapter.ViewHolder>() {
 
     private var petModel: PetModel? = PetModel()
 
     var context: Context? = null
 
     init {
-        this.context = mContext
+        this.context = context
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): ViewHolder {
