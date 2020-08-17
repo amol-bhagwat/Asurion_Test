@@ -11,9 +11,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.asurion_test.R
 import com.example.asurion_test.activity.HomeActivity
 import com.example.asurion_test.activity.PetInfoActivity
-import com.example.asurion_test.R
 import com.example.asurion_test.model.PetModel
 import com.example.asurion_test.network.response.Pets
 import com.example.asurion_test.util.Constant
@@ -27,7 +27,7 @@ class PetListAdapter(mContext: Context?) : RecyclerView.Adapter<PetListAdapter.V
 
     private var petModel: PetModel? = PetModel()
 
-    var context : Context?=null
+    var context: Context? = null
 
     init {
         this.context = mContext
@@ -63,7 +63,7 @@ class PetListAdapter(mContext: Context?) : RecyclerView.Adapter<PetListAdapter.V
         }
     }
 
-    fun setPetList(mPetModel:PetModel) {
+    fun setPetList(mPetModel: PetModel) {
         this.petModel = mPetModel
         notifyDataSetChanged()
     }
@@ -82,7 +82,7 @@ class PetListAdapter(mContext: Context?) : RecyclerView.Adapter<PetListAdapter.V
 
         private fun loadImage(URL: String?): Bitmap? {
             var bitmap: Bitmap? = null
-            var `in`: InputStream?
+            val `in`: InputStream?
             try {
                 `in` = openHttpConnection(URL)
                 bitmap = BitmapFactory.decodeStream(`in`)
@@ -109,7 +109,7 @@ class PetListAdapter(mContext: Context?) : RecyclerView.Adapter<PetListAdapter.V
             return inputStream
         }
 
-        init { 
+        init {
             imageViewReference = WeakReference<ImageView>(imageView)
         }
 

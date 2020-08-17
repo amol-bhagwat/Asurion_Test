@@ -31,38 +31,44 @@ class HomeRepository {
 
             override fun onFailure(call: Call, e: IOException) {
                 val petModel = PetModel()
-                petModel.error=Resources.getSystem().getString(R.string.something_went_wrong)
+                petModel.error = Resources.getSystem().getString(R.string.something_went_wrong)
                 petLiveData.postValue(petModel)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 val responseString = response.body()?.string()
 
-                //Parse Data
-                val petsJsonObject = JSONObject(responseString)
-
-                val petList:ArrayList<Pets> = ArrayList();
                 val petModel = PetModel()
 
-                val petJsonArray: JSONArray = petsJsonObject.getJSONArray("pets")
-
-                for (i in 0 until petJsonArray.length()) {
-                    val petJsonObject:JSONObject=petJsonArray.getJSONObject(i)
-                    val pet = Pets();
-                    pet.title=petJsonObject.getString("title")
-                    pet.date_added=petJsonObject.getString("date_added")
-                    pet.content_url=petJsonObject.getString("content_url")
-                    pet.image_url=petJsonObject.getString("image_url")
-
-                    petList.add(pet)
-                }
-                petModel.pet=petList
+                petModel.pet = parsePetResponse(responseString)
 
                 petLiveData.postValue(petModel)
             }
         })
         return petLiveData
     }
+
+    fun parsePetResponse(responseString: String?): ArrayList<Pets> {
+        //Parse Data
+        val petsJsonObject = JSONObject(responseString)
+
+        val petList: ArrayList<Pets> = ArrayList();
+
+        val petJsonArray: JSONArray = petsJsonObject.getJSONArray("pets")
+
+        for (i in 0 until petJsonArray.length()) {
+            val petJsonObject: JSONObject = petJsonArray.getJSONObject(i)
+            val pet = Pets();
+            pet.title = petJsonObject.getString("title")
+            pet.date_added = petJsonObject.getString("date_added")
+            pet.content_url = petJsonObject.getString("content_url")
+            pet.image_url = petJsonObject.getString("image_url")
+
+            petList.add(pet)
+        }
+        return petList
+    }
+
 
     fun getConfig(): MutableLiveData<Config> {
 
@@ -76,31 +82,36 @@ class HomeRepository {
 
             override fun onFailure(call: Call, e: IOException) {
                 val config = Config()
-                config.error=Resources.getSystem().getString(R.string.something_went_wrong)
+                config.error = Resources.getSystem().getString(R.string.something_went_wrong)
                 configLiveData.postValue(config as Config?)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 val responseString = response.body()?.string()
 
-                //Parse Data
-                val petsJsonObject = JSONObject(responseString)
-
                 val config = Config()
-                val settings=Settings()
 
-                val settingJsonObject: JSONObject = petsJsonObject.getJSONObject("settings")
-
-                settings.isCallEnabled=settingJsonObject.getBoolean("isCallEnabled")
-                settings.isChatEnabled=settingJsonObject.getBoolean("isChatEnabled")
-                settings.workHours=settingJsonObject.getString("workHours")
-
-                config.settings=settings
+                config.settings = configParsing(responseString)
 
                 configLiveData.postValue(config)
             }
         })
         return configLiveData
+    }
+
+    fun configParsing(responseString: String?): Settings {
+        //Parse Data
+        val petsJsonObject = JSONObject(responseString)
+
+        val settings = Settings()
+
+        val settingJsonObject: JSONObject = petsJsonObject.getJSONObject("settings")
+
+        settings.isCallEnabled = settingJsonObject.getBoolean("isCallEnabled")
+        settings.isChatEnabled = settingJsonObject.getBoolean("isChatEnabled")
+        settings.workHours = settingJsonObject.getString("workHours")
+
+        return settings
     }
 
 

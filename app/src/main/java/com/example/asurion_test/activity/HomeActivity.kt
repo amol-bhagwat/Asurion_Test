@@ -20,14 +20,14 @@ import com.example.asurion_test.viewmodel.HomeViewModel
 
 class HomeActivity : AppCompatActivity() {
 
-    private lateinit var mHomeViewModel: HomeViewModel
-    private var mPetListAdapter: PetListAdapter? = null
-    private var mRecyclerView: RecyclerView? = null
-    private var mBtnCall: AppCompatButton? = null
-    private var mBtnChat: AppCompatButton? = null
-    private var mTextViewOfficeTime: TextView? = null
-    private var isWithinOfficeHours : Boolean =false
-    private var mProgressBar: ProgressBar? = null
+    private lateinit var homeViewModel: HomeViewModel
+    private var petListAdapter: PetListAdapter? = null
+    private var recyclerView: RecyclerView? = null
+    private var btnCall: AppCompatButton? = null
+    private var btnChat: AppCompatButton? = null
+    private var textViewOfficeTime: TextView? = null
+    private var isWithinOfficeHours: Boolean = false
+    private var progressBar: ProgressBar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,79 +38,82 @@ class HomeActivity : AppCompatActivity() {
         preWork()
 
         //Check internet and dp api calll
-        if(NetworkUtils.isNetworkAvailable(this)) {
+        if (NetworkUtils.isNetworkAvailable(this)) {
             getConfig()
             getPet()
-        }else{
-            Toast.makeText(this,getString(R.string.check_internet_connection),Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, getString(R.string.check_internet_connection), Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
     private fun preWork() {
-        mPetListAdapter = PetListAdapter(this)
-        mRecyclerView?.adapter = mPetListAdapter
+        petListAdapter = PetListAdapter(this)
+        recyclerView?.adapter = petListAdapter
     }
 
     private fun initViews() {
-        mBtnChat=findViewById(R.id.buttonChat)
-        mBtnCall=findViewById(R.id.buttonCall)
-        mTextViewOfficeTime=findViewById(R.id.textViewOfficeTime)
-        mProgressBar=findViewById(R.id.progressBar)
+        btnChat = findViewById(R.id.buttonChat)
+        btnCall = findViewById(R.id.buttonCall)
+        textViewOfficeTime = findViewById(R.id.textViewOfficeTime)
+        progressBar = findViewById(R.id.progressBar)
 
-        mRecyclerView=findViewById(R.id.recyclerView)
-        mRecyclerView!!.layoutManager = LinearLayoutManager(this)
-        mRecyclerView!!.setHasFixedSize(true)
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView!!.layoutManager = LinearLayoutManager(this)
+        recyclerView!!.setHasFixedSize(true)
 
-        mHomeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
-        mBtnCall?.setOnClickListener {
+        btnCall?.setOnClickListener {
             officeStatus()
         }
 
-        mBtnChat?.setOnClickListener {
+        btnChat?.setOnClickListener {
             officeStatus()
         }
     }
 
     //Get pet details
     private fun getPet() {
-        mProgressBar?.visibility = View.VISIBLE
+        progressBar?.visibility = View.VISIBLE
 
-        mHomeViewModel.allPet.observe(this,
+        homeViewModel.allPet.observe(this,
             Observer { petModel ->
-                mProgressBar?.visibility = View.GONE
-                if(petModel.error.isNullOrBlank()){
-                    mPetListAdapter?.setPetList(petModel as PetModel)
-                }else{
-                    Toast.makeText(this,petModel.error,Toast.LENGTH_SHORT).show()
+                progressBar?.visibility = View.GONE
+                if (petModel.error.isNullOrBlank()) {
+                    petListAdapter?.setPetList(petModel as PetModel)
+                } else {
+                    Toast.makeText(this, petModel.error, Toast.LENGTH_SHORT).show()
                 }
             })
     }
 
-        //Get configuration
-        private fun getConfig() {
-            mProgressBar?.visibility = View.VISIBLE
-            mHomeViewModel.getConfig.observe(this, Observer { config ->
-            mProgressBar?.visibility = View.GONE
+    //Get configuration
+    private fun getConfig() {
+        progressBar?.visibility = View.VISIBLE
+        homeViewModel.getConfig.observe(this, Observer { config ->
+            progressBar?.visibility = View.GONE
 
-                if(config.error.isNullOrBlank()){
-                    isWithinOfficeHours=mHomeViewModel.compareOfficeTime(config,mHomeViewModel.currentTime())
+            if (config.error.isNullOrBlank()) {
+                isWithinOfficeHours =
+                    homeViewModel.compareOfficeTime(config, homeViewModel.currentTime())
 
-                if(config.settings?.isChatEnabled==true){
-                    mBtnChat?.visibility=View.VISIBLE
+                if (config.settings?.isChatEnabled == true) {
+                    btnChat?.visibility = View.VISIBLE
                 }
-                if(config.settings?.isCallEnabled==true){
-                    mBtnCall?.visibility=View.VISIBLE
+                if (config.settings?.isCallEnabled == true) {
+                    btnCall?.visibility = View.VISIBLE
                 }
-                    mTextViewOfficeTime?.text = getString(R.string.office_hours).plus(config.settings?.workHours)
+                textViewOfficeTime?.text =
+                    getString(R.string.office_hours).plus(config.settings?.workHours)
 
-            }else{
-                Toast.makeText(this,config.error,Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, config.error, Toast.LENGTH_SHORT).show()
             }
         })
     }
 
-    private fun officeWorkAlert(message:String){
+    private fun officeWorkAlert(message: String) {
         val builder = AlertDialog.Builder(this)
         with(builder)
         {
@@ -122,9 +125,9 @@ class HomeActivity : AppCompatActivity() {
 
     //Show alert as per office time
     private fun officeStatus() {
-        if(isWithinOfficeHours){
+        if (isWithinOfficeHours) {
             officeWorkAlert(getString(R.string.within_work_hours))
-        }else{
+        } else {
             officeWorkAlert(getString(R.string.outside_work_hours))
         }
     }
