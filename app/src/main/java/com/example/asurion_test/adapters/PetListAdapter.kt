@@ -27,6 +27,7 @@ class PetListAdapter(context: Context?) : RecyclerView.Adapter<PetListAdapter.Vi
 
     private var petModel: PetModel? = PetModel()
 
+    //context used here to move to next activity using intent
     var context: Context? = null
 
     init {
